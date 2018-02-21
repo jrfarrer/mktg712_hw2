@@ -75,7 +75,6 @@ hertz_data %>%
 ggcorr(label = TRUE, size = 3, hjust = 0.75, layout.exp = 1)
 ```
 
-
 ## B
 
 

@@ -9,8 +9,6 @@ output:
     self-contained: true
     fig_caption: yes
     df_print: 'kable'
-params:
-  external_queries: false
 ---
 
 
@@ -60,9 +58,15 @@ lm1 <- lm(Recom_mend_Hertz ~ Overall_Exper + Staff_Courtesy + Speed_of_Service +
 summary(lm1, digits = 4)
 ```
 
+### Multicolinearity
+
+VIF = variance inflation factors 
+
 ```{r}
 ols_vif_tol(lm1)
 ```
+
+Pearson's Cofficient in boxes
 
 ```{r}
 hertz_data %>%

@@ -1,0 +1,82 @@
+---
+title: "MTKG712 HW2"
+date: "`r format(Sys.time(), '%Y-%m-%d')`"
+output:
+  bookdown::html_document2:
+    css: css/analysis.css
+    toc: false
+    number_sections: no
+    self-contained: true
+    fig_caption: yes
+    df_print: 'kable'
+params:
+  external_queries: false
+---
+
+
+```{r load-packages}
+pacman::p_load(tidyverse, broom, modelr, GGally, olsrr)
+```
+
+```{r setup, include = FALSE}
+# knitr options
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.align = 'center',
+                      fig.width = 9, fig.height = 8, cache = FALSE)
+
+# Forces any incline R to only have 2 digits and a comma for the thounsands place
+# Forces any incline R to only have 2 digits and a comma for the thounsands place
+knitr::knit_hooks$set(
+          size = function(before, options, envir) {
+                  if (before) return(paste0("\n \\", options$size, "\n\n"))
+                  else return("\n\n \\normalsize \n")
+                  }
+          , inline = function(x) {if(!is.numeric(x)){ x }else{ prettyNum(round(x,3), big.mark=",") } }
+          )
+
+# Don't show scientific notation and only 3 digits
+#options(scipen = 3, digits = 7)
+
+# Create folder structure
+data_path <- "data"; viz_path <- "viz"
+purrr::walk(c(data_path, viz_path), dir.create, showWarnings = FALSE)
+```
+
+```{r read-in-hertz-data}
+hertz_data <- 
+  read_csv(file.path(data_path, "cust_survey_transaction.csv")) %>%
+  rename(`Total_charge_USD` = `Total _charge_USD`)
+
+  #mutate_at(vars(Recom_mend_Hertz, Overall_Exper, Staff_Courtesy, Speed_of_Service, Veh_Equip_Condition, 
+  #          Trans_Billing_as_Expected, Value_for_the_Money), as.factor)
+```
+
+# Question 4
+
+## A
+
+```{r}
+lm1 <- lm(Recom_mend_Hertz ~ Overall_Exper + Staff_Courtesy + Speed_of_Service + Veh_Equip_Condition + 
+            Trans_Billing_as_Expected + Value_for_the_Money + Total_charge_USD + Survey_checkout_diff, data = hertz_data)
+summary(lm1, digits = 4)
+```
+
+```{r}
+ols_vif_tol(lm1)
+```
+
+```{r}
+hertz_data %>%
+  select(Recom_mend_Hertz, Overall_Exper, Staff_Courtesy, Speed_of_Service, Veh_Equip_Condition, 
+            Trans_Billing_as_Expected,  Value_for_the_Money,  Total_charge_USD, Survey_checkout_diff) %>%
+ggcorr(label = TRUE, size = 3, hjust = 0.75, layout.exp = 1)
+```
+
+
+## B
+
+
+## C
+
+
+
+## D

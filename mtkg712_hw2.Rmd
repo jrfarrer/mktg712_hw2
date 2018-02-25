@@ -121,7 +121,7 @@ tidy(lm2) %>%
 
 # B
 
-To test if the relationships change by Rental Location Type, Rental Purpose, and Booking Channel, we individual add each to the base model. The results are shown in \@ref(tab:part-b-table):
+To test if the relationships change by Rental Location Type, Rental Purpose, and Booking Channel, we individual add each to the base model. The results are shown in the table below:
 
 ```{r part-b-table, results = 'asis'}
 lm3 <- update(lm2, . ~ . + rent_loc_type)
@@ -147,6 +147,8 @@ We will explore a few in this dataset:
 
 ## Customer Tier
 
+The customer tier is the status in the loyalty program the customer is in. We look at the mean response to recommend Hertz within each tier:
+
 ```{r results = 'asis'}
 hertz_data %>%
   group_by(cust_tier_code) %>%
@@ -154,6 +156,8 @@ hertz_data %>%
   arrange(desc(n)) %>%
   pander()
 ```
+
+We add this variable to the model and use `anova` to test if the added variable contributes to the predictive ability of the model. We see that customer tier would improve our base model.
 
 ```{r results = 'asis'}
 lm6 <- update(lm2, . ~ . + cust_tier_code)
@@ -163,22 +167,28 @@ anova(lm6, lm(lm2$call, data = lm6$model)) %>%
 
 ## Country
 
+There are 75 countries in the dataset - segmenting on country by itself would not be useful. We try instead an is_US indicator:
+
 ```{r results = 'asis'}
 hertz_data %>%
-  group_by(addr_country) %>%
+  mutate(is_US = if_else(addr_country == "US", addr_country, "non-US")) %>%
+  group_by(is_US) %>%
   summarise(n = n(), mean = mean(Recom_mend_Hertz, na.rm = TRUE)) %>%
-  arrange(desc(n)) %>%
-  head(10) %>%
   pander()
 ```
 
+The results below demonstrates that this indicator of US and non-US would not be useful.
+
 ```{r results = 'asis'}
-lm7 <- update(lm2, . ~ . + addr_country)
-anova(lm7, lm(lm2$call, data = lm7$model)) %>%
+lm7 <- lm(update(lm2$call$formula, ~. + is_US), data = hertz_data %>% 
+             mutate(is_US = if_else(addr_country == "US", addr_country, "non-US")))
+anova(lm7, lm2) %>% 
   pander(missing = "")
 ```
 
 ## Rental Day 
+
+We check to see if the day the vehicle was rented affects likelihood to recommend, hypothesizing that weekend rentals might be more likeluy to recommend. We see that this is not the case.
 
 ```{r result = 'asis'}
 hertz_data %>%
@@ -197,6 +207,9 @@ anova(lm8, lm(lm2$call, data = lm8$model)) %>%
 
 ## Difference in Car Reserved and Car Given
 
+Finally, we hypothesize that if customers were given a differnet car than they reserved, this may affect their likelihood to recommend (either in a positive or negative way). However, we do not find that a segmentation on this dimension would be valuable.
+
+
 ```{r results = 'asis'}
 hertz_data %>%
   mutate(is_same = if_else(xgra_veh_class == xgra_vclass_reserv, "Same", "Different")) %>%
@@ -209,7 +222,7 @@ hertz_data %>%
 lm9 <- lm(update(lm2$call$formula, ~. + is_same), data = hertz_data %>% 
              mutate(is_same = if_else(xgra_veh_class == xgra_vclass_reserv, "Same", "Different")))
 anova(lm9, lm2) %>% 
-  pander(caption = "ANOVA for model with", missing = "")
+  pander(missing = "")
 ```
 
 ## D

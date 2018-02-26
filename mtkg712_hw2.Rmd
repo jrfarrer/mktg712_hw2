@@ -131,8 +131,8 @@ regression_results(lm2, lm3, lm4, lm5,
                    title = "Rental Location Type, Rental Purpose, and Booking Channel")
 ```
 
-1. **Rental Location Type**: Yes - all survey question responses held constant, picking up the rental car at the airport increases the response about recommending Hertz by 0.044 points. In reality, this would not translate into a full point. 
-2. **Rental Purpose**: No - all survey question responses held constant, the purpose of the rental has not impact.
+1. **Rental Location Type**: Yes - all survey question responses held constant, picking up the rental car at the airport increases the response about recommending Hertz by 0.023 points. In reality, this would not translate into a full point. 
+2. **Rental Purpose**: Yes - all survey question responses held constant, the renting for Rep. Insur. or Loaner compared to Bus. is associated with a 0.114 increase in recommending Hertz and Leis. / Pers. compared to Bus. is assoicated with a 0.059 increase in recommending Hertz.
 3. **Booking Channel**: Yes - all survey question responses held constant, booking through hertz.com increases the response about recommending Hertz by 0.104 points. In reality, this would not translate into a full point. 
 
 # C
